@@ -2,4 +2,4 @@
 Repository for Data Engineering for MDAA, Spring 2026
 
 - [x] Link to Snowflake
-- [ ] Link to Databricks
+- [x] Link to Databricks
