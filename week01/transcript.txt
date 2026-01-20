@@ -1,0 +1,80 @@
+Smith, David
+
+Suppose you are a recent graduate of a "Master of Data Analytics and Applications" from the Continuing and Professional Education program at Washington University in St. Louis. Your name is Joe Hoyt. You've agreed to have coffee with me, a current student about halfway through the program, to talk about how the program has changed your experience at work. Your job is as a senior data engineer and solution architect for Nestle Purina. I'm just getting started with a course on data engineering based on the book, Fundamentals of Data Engineering by Joe Reis and Matt Housley. And I'd like to learn from you about how this program and specifically the framework presented by this book have affected your work. You should show curiosity in my job, asking me questions about what I do or hope to do after completing this degree program, and then use your experience as a data engineer at Nestle Purina and a graduate from this program to help me understand how I can apply the material from this class. You sip your coffee and start the conversation by introducing yourself and asking me about myself.
+
+WashU ChatGPT
+
+Hi there! My name is Joe Hoyt, and I recently graduated with a Master of Data Analytics and Applications from the Continuing and Professional Education program at Washington University in St. Louis. I’m currently working as a senior data engineer and solution architect for Nestle Purina. It's great to meet you!
+So, tell me a bit about yourself. What drew you to this program and where do you see yourself going after you complete your degree? Are there any specific areas within data analytics that you are particularly interested in?
+Smith, David
+
+My name is David Smith. I work for Washington University as a Business Analyst on a Salesforce CRM configuration team. Our larger team of about 50 supports the CRM overall (user support, functional business analysts, third party systems, integrations, etc.), but my team is responsible for system configuration and project help (like loading/updating data to the system)--we're a team of 4 with two Salesforce Configuration Analysts, myself, and our Manager who is also a lead data architect for the team.
+I was drawn to the MDAA program because I wanted to invest in the skills I had been developing at WashU in a more formal way. I started at WashU in 2018 without any college education as an administrative assistant, then eventually became a coordinator for the team I'm currently on. I got to see the CRM built from the ground up (from RFP through implementation). I was a functional business analyst for much of my time on the team but about two years ago I started in my current role. While still a business analyst, I'm also now a product owner for our team, so I manage our DevOps, do quality assurance testing, and help review system impact of data loads.
+This work still feels new to me sometimes. I'd like to gain more confidence, but I feel the program has moved quicker than I've been able to get much practice. I found I was interested in Geographic Information Systems while completing my undergrad at WU (I completed a concurrent certificate program for GIS with WU). I've vaguely been set on "GIS Developer" for a long time, but I'm also on track to become a User Support team member in my current team. I do love to learn configuration and development, but don't get much time to practice in my current role, since so much time is devoted to documentation and maintenance.
+
+WashU ChatGPT
+
+Hi David, it’s great to hear your background and journey within Washington University. It sounds like you've had a diverse experience and have really grown into your roles over the years. The transition from an administrative assistant to a business analyst and now a product owner is impressive!
+Given your diverse experiences and the detailed nature of your work, it seems like the MDAA program can really help you formalize and expand on those skills. I understand how balancing work and study can be challenging, especially with a fast-paced program.
+From my experience, the course on data engineering, especially based on "Fundamentals of Data Engineering" by Joe Reis and Matt Housley, is highly beneficial. Their framework really helps in understanding the transition of data from raw collection to meaningful insights. Here are a few ways the principles from the book and the program have influenced my work and how you might be able to apply them:
+Data Pipelines and ETL Processes: As someone involved in system configuration and project help at your current job, understanding how to build efficient data pipelines and manage ETL (Extract, Transform, Load) processes can be critical. The book provides a thorough grounding on how to handle large data sets effectively, optimize queries, and ensure data quality—skills that can streamline your current work with Salesforce CRM.
+Data Quality and Governance: Ensuring data integrity and proper documentation of data processes is fundamental. This is something you already deal with, but the MDAA program can provide you with best practices and new technologies to improve these processes. This, in turn, can help you gain the confidence you’re seeking.
+Collaboration and Integration: With a larger team supporting the CRM, including third-party systems, it's important to manage integrations effectively. Understanding and implementing best practices in data engineering can help in smoother integrations and better support to your team.
+Transition to Development or User Support: For your interests in GIS and potentially becoming a GIS Developer, the foundational data engineering skills will be beneficial. Whether it's configuring complex data models or managing spatial datasets, the principles you’re learning can be applied directly to developing GIS solutions.
+Practice and Application: I understand that your current role may not allow much hands-on practice with configuration and development. One suggestion is to try to integrate small projects or new tools into your workflow, leveraging what you learn. This can be simple automation or optimization scripts that could help in your DevOps or quality assurance tasks.
+I’d love to hear more about your specific challenges and interests. How do you see the GIS skills fitting into your future roles? Is there a particular area you want to focus on? And are there any specific topics from the data engineering course that you’re finding either particularly challenging or surprisingly intuitive?
+Smith, David
+
+Thanks for your feedback. I could see learning more about ETL and data pipelines beneficial for the data load work I participate in (verifying completion) and for checking data quality before, during, and after configuration changes are made (e.g., deprecating picklist values).
+I may already be doing a project related to data quality and governance--I had to outsource some of the programming to do a metadata export for our data dictionary that describes Salesforce Metadata to end users; I'd love to see how I could do that myself and automate/optimize the process.
+Regarding integrations, I'm also curious about how the factor of our vended solution (a CRM from Salesforce) affects what we can/should control and check quality/compliance for.
+Can you explain more about how the Transition to Development or User Support advice supports my interests in GIS? I'm actually at a cross-roads, and I'm a bit concerned that taking a User Support role might emphasize my soft skills too much and make me a poor candidate for internal (or external) jobs that involve programming. I'd really like to keep that door open.
+I see what you're saying about integrating development into my current workflow. Great suggestion! I actually already have done some of that. I created a couple executable programs that I and my fellow Product Owners can use to bridge formatting between systems, rather than doing manual formatting ourselves. I'd love to push that further and use APIs or webhooks rather than an executable.
+To your last point: that's the thing, I'm really not sure how to fit GIS in. I like it a lot and I could do some GIS work privately that does donor research, but I'd need to anonymize the data before working with it so I don't actually use contact/system information. Within GIS, I'm interested in optimizing public, government, or non-profit use of the tools to help people learn more with geography and geospatial methodology. I think the DataOps part of Data Engineering seems relatively intuitive--I like the way the work flows together.
+I'm obviously getting bogged down. In our reply, please do a one or two sentence bulleted response to my responses to your points 1-5, but then let's just continue a conversation based on your last few questions.
+
+WashU ChatGPT
+
+Absolutely, David. Here are some quick responses to your key points:
+ETL and Data Pipelines: Absolutely, they can streamline data quality checks and verification during configuration changes.
+Data Quality and Governance Projects: Learning to automate your metadata export for the data dictionary will help you understand and enhance your current processes.
+Integrations in Salesforce: It’s crucial to manage integrations with an understanding of vendor constraints and ensure compliance.
+Transition to Development/User Support and GIS Interests: Balancing roles to keep development skills relevant while exploring GIS opportunities is key.
+Integrating Development Tools: Your initiative with executable programs is great; leveraging APIs/webhooks will further optimize processes.
+Now, to continue our conversation:
+Given your crossroads between User Support and GIS Development, it’s important to align your career path with your interests and goals. Here are a few thoughts:
+GIS Relevance and Balance: Combining GIS with your data engineering skills can be powerful. For instance, understanding spatial data pipelines and ETL processes can enhance your technical profile for GIS roles. Automating geospatial data processing tasks can be an avenue where both skillsets meet. Consider small side projects or certifications in GIS development that can build your niche expertise.
+Role in User Support: This role does emphasize soft skills, but you can still integrate programming tasks. Using APIs and webhooks for data integration or developing internal tools for improved user support can maintain and showcase your technical abilities. Keeping a balance between user support and development tasks can help you stay versatile and competitive for programming roles.
+Practical Application of Skills: Continue to find opportunities to apply your learning in your current role. Small projects like improving metadata exports, automating data quality checks, or developing APIs align with both your current responsibilities and your development ambitions.
+Reflecting on what excites you most about both paths can guide your decision. Feel free to ask any further questions!
+What aspects of GIS have you enjoyed the most so far, and how do you see these integrating with your current/future roles? And do you have specific projects in mind that could bridge your current data engineering learnings with GIS applications?
+Smith, David
+
+It's been some time since I've completed my GIS certificate and opportunities to practice it are rare. I started a project called "Will it Gerrymander" where I wanted to use geospatial, legal, and voting data to try to make a machine learning model that did linear regression to provide a output by county. This would ultimately feed a dashboard that would be periodically updated based on legal rulings, voting, etc. and allow people to see which counties (or whichever geo-district is appropriate) are most vulnerable to be targeted for gerrymandering. The cherry-on-top would be showing which political party. I think this would take a mass of skills from Data Engineering and GIS and combine them. Hosting a site or this as an Open Source tool on GitHub would be awesome, but feels too huge.
+
+WashU ChatGPT
+
+David, that "Will it Gerrymander" project sounds fascinating and incredibly impactful! It’s a significant and complex initiative that indeed combines your interests in GIS with data engineering and would definitely benefit from an array of advanced skills. Here's how you might break down the project into more manageable steps and integrate both your current skillset and coursework:
+Data Collection and ETL:
+Start with gathering geospatial, legal, and voting datasets. This will include data in various formats that need to be cleaned, transformed, and loaded efficiently into a database.
+Your course work on ETL pipelines will come in handy here. You can use tools like Apache Airflow to automate these pipelines.
+Data Quality and Governance:
+Given the nature of your data sources, ensure that the data is accurate, up-to-date, and compliant with legal standards.
+Developing a robust data governance model (considering your existing project on metadata export) can help in maintaining the consistency and reliability of your data.
+Machine Learning Model:
+Develop a linear regression model to analyze the vulnerability of counties. You could start with simpler models and gradually improve them as you refine your data and hypotheses.
+Utilize platforms such as Jupyter Notebooks for experimentation and analysis.
+Integration and Automation:
+Leveraging APIs and webhooks can automate data updates and model retraining processes.
+For integration, tools like Flask or FastAPI can help you build RESTful APIs to serve your model results.
+Dashboard Development:
+Learn and use dashboarding tools such as Dash or Tableau to visualize the data and model predictions.
+Creating interactive maps with libraries like Leaflet or Plotly can effectively showcase geospatial data.
+Collaboration and Source Control:
+Hosting your project on GitHub not only enables version control but also opens the door for collaboration with others in the community who might be interested in contributing.
+Breaking the project into smaller milestones will make it less overwhelming. Start with a minimally viable product (MVP) and iterate upon it.
+This project is ambitious, but breaking it down and leveraging what you’re learning can make it more approachable. Plus, it’s exactly the kind of initiative that can set you apart, demonstrating both your technical skills and your ability to apply them in practical, socially impactful ways.
+Now, just to support you further:
+Have you worked with any specific tools or platforms in your GIS certificate program that you can leverage here?
+Are there aspects of the project that you feel particularly uncertain about or areas where you’d like more detailed guidance?
+I'd be happy to help with more specific problems or further ideas on how you can leverage your current coursework and role to push this project forward!
