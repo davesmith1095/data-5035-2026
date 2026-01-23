@@ -1,0 +1,1 @@
+SELECT PHONE FROM data5035.spring26.donations WHERE NOT REGEXP_LIKE(PHONE, '\\d{3}-\\d{3}-\\d{4}')

@@ -1,0 +1,54 @@
+✨ - From Gemini
+✅ - Wrote query
+
+When done, rank issues and take top 5 for assignment.
+
+Metadata Issues:
+1. No primary key
+2. DONATION_ID shouldn't be nullible, should be autonumber.
+    2.1. DONATION_ID NUMBER(38,0) AUTOINCREMENT COMMENT 'Unique identifier for each donation.', ✨
+3. Organization and Amount probably shouldn't be nullible
+4. Age and DOB have inaccuracies and are redundant in this context (Donations from orgs)
+5. Rename NAME --> DONOR_NAME and ORGANIZATION --> DONOR_ORG
+6. VARCHAR for strings unnecessarily large
+7. DATE_OF_BIRTH should be formatted correctly if kept
+8. PHONE should have consistent formatting, separate int'l or ext, standardize punctuation
+9. ZIP should be string with leading zeroes
+10. AMOUNT should be currency
+
+Data Issues:
+1. AGE and DATE_OF_BIRTH misaligned (1.1 code below) (✨ to figure out CTE)
+2. NAME with inconsistent comma use (2.1 checked proper case)
+3. ZIPs should have leading zeroes (3.1 below)
+4. CATEGORY has N/As and null (4.1. below)
+5. PHONE length inconsistencies (5.1. below)
+
+Honorable Mention:
+1. Duplicate data in the table but not quality issue
+2. Confirmed all STATE values were in 50 states
+3. PHONE with inconsistent use of punctuation
+3.1 SELECT PHONE FROM data5035.spring26.donations WHERE NOT REGEXP_LIKE(PHONE, '\\d{3}-\\d{3}-\\d{4}')
+
+
+1.1                 WITH FULL_YR AS(
+                        SELECT AGE, DATE_OF_BIRTH,
+                                CASE WHEN CAST(YEAR(DATE_OF_BIRTH) AS INT) <= 7 THEN 
+                                2000 + CAST(YEAR(DATE_OF_BIRTH) AS INT) ELSE
+                                1900 + CAST(YEAR(DATE_OF_BIRTH) AS INT) 
+                                END AS FULL_YR
+                        FROM data5035.spring26.donations
+                        )
+                    
+                    SELECT AGE, FULL_YR,
+                        CASE 
+                            WHEN YEAR(CURRENT_DATE()) - AGE <> FULL_YR 
+                            THEN YEAR(CURRENT_DATE()) - FULL_YR
+                            ELSE 0 END
+                        AS AGE_CHECK
+                    FROM FULL_YR
+                    ORDER BY FULL_YR ASC
+
+2.1                 SUM(CASE WHEN NAME != INITCAP(NAME) THEN 1 ELSE 0 END) AS BAD_NAMES
+3.1                 SELECT ZIP FROM data5035.spring26.donations WHERE LENGTH(ZIP) < 5
+4.1                 WHERE CATEGORY IN ('N/A') OR CATEGORY IS NULL
+5.1                 LENGTH(REGEXP_REPLACE(PHONE, '[^0-9]', '')) AS PHONE_LEN
