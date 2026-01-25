@@ -1,3 +1,5 @@
+
+
 -- Use CTE to create birth year and later run expression on it
 WITH YEAR_FIX AS(
     SELECT *,
@@ -23,3 +25,6 @@ SELECT *,
         CASE WHEN LENGTH(REGEXP_REPLACE(PHONE, '[^0-9]', ''))>10 THEN 1 ELSE 0 END AS PHONE_LEN,
 -- From CTE which cites donations csv
 FROM YEAR_FIX
+
+
+SELECT COUNT(*) FROM output_zips
