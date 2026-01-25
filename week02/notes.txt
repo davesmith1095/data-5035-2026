@@ -30,25 +30,21 @@ Honorable Mention:
 3.1 SELECT PHONE FROM data5035.spring26.donations WHERE NOT REGEXP_LIKE(PHONE, '\\d{3}-\\d{3}-\\d{4}')
 
 
-1.1                 WITH FULL_YR AS(
-                        SELECT AGE, DATE_OF_BIRTH,
-                                CASE WHEN CAST(YEAR(DATE_OF_BIRTH) AS INT) <= 7 THEN 
-                                2000 + CAST(YEAR(DATE_OF_BIRTH) AS INT) ELSE
-                                1900 + CAST(YEAR(DATE_OF_BIRTH) AS INT) 
-                                END AS FULL_YR
-                        FROM data5035.spring26.donations
-                        )
-                    
-                    SELECT AGE, FULL_YR,
-                        CASE 
-                            WHEN YEAR(CURRENT_DATE()) - AGE <> FULL_YR 
-                            THEN YEAR(CURRENT_DATE()) - FULL_YR
-                            ELSE 0 END
-                        AS AGE_CHECK
-                    FROM FULL_YR
-                    ORDER BY FULL_YR ASC
+1.1         WITH YEAR_FIX AS(
+                SELECT *
+                    CASE WHEN CAST(YEAR(DATE_OF_BIRTH) AS INT) <= 7 THEN 
+                    2000 + CAST(YEAR(DATE_OF_BIRTH) AS INT) ELSE
+                    1900 + CAST(YEAR(DATE_OF_BIRTH) AS INT) 
+                    END AS BIRTH_YEAR
+                FROM data5035.spring26.donations
+                )
+            
+            SELECT *,
+            CASE WHEN YEAR(CURRENT_DATE()) - AGE <> BIRTH_YEAR THEN 1 ELSE 0 END AS AGE_CHECK
+            FROM YEAR_FIX
 
-2.1                 SUM(CASE WHEN NAME != INITCAP(NAME) THEN 1 ELSE 0 END) AS BAD_NAMES
-3.1                 SELECT ZIP FROM data5035.spring26.donations WHERE LENGTH(ZIP) < 5
-4.1                 WHERE CATEGORY IN ('N/A') OR CATEGORY IS NULL
-5.1                 LENGTH(REGEXP_REPLACE(PHONE, '[^0-9]', '')) AS PHONE_LEN
+2.1         CASE WHEN NAME != INITCAP(NAME) THEN 1 ELSE 0 END AS LOWER_NAMES
+3.1         CASE WHEN LENGTH(ZIP) < 5 THEN 1 ELSE 0 END AS SHORT_ZIP
+4.1         CASE WHEN (CATEGORY IN ('N/A') OR CATEGORY IS NULL THEN 1 ELSE 0 END) AS NULL_CATS
+5.1         CASE WHEN LENGTH(REGEXP_REPLACE(PHONE, '[^0-9]', ''))>10 THEN 1 ELSE 0 END AS PHONE_LEN
+6.1         CASE WHEN NAME LIKE ('%,%') THEN 1 ELSE 0 END AS COMMA_NAME
