@@ -1,3 +1,17 @@
+
+## Wk 5 Assignment
+##### David Smith
+--
+
+### Problem Space
+
+ During my time as a Florissant, MO resident, I've been inspired to get invovled in local government in a few ways: I did a few projects with the City's GIS Team with their Engineering Department and served a term on the Planning and Zoning Commission. As a student, I put some of my database skills to the test during a previous semester by analyzing traffic accident data. This project mostly fell to the side until one key change in my life: I'll soon be a father for the first time. This means not only will I need to know more about where it's safe to drive, I'll need to know where it's safe to *walk*. 
+
+ My problem space explores where the best and safest spots are to walk in select neighborhoods in St. Louis. I'll choose Florissant as well as a few prospective locations for moving to, especially if we don't make the cut for a safe walk around the block.
+
+---
+### Data Inventory
+
 | Data Item | Importance (A/B/C) | Accessibility (1-4) | Why it's important | Why it's accessible (or not) |
 | :--- | :---: | :---: | :--- | :--- |
 | **Traffic Speed** | A | 4 | Speed could correlate with control and accident severity | Private, state, or county level tracking available. Could be accessible through APIs. |
@@ -26,3 +40,11 @@
 | **Safety Incidents, Animal Attacks** | B | 3 | Safer to avoid areas with high incident count | Law enforcement records may be sparsely available. Nextdoor scraper. |
 | **Safety Loose Animal Reports** | B | 3 | Common loose animals could be recurring in an area | Law enforcement records may be sparsely available. Nextdoor scraper. |
 | **Infrastructure Sidewalk, Condition, Cracks** | C | 2 | Too rough condition not suitable for stroller | Local Sidewalk Replacement Program requires internal
+
+---
+### Importance-Accessibility Matrix
+
+| | **Readily Accessible** | **Difficult to Access** |
+| :--- | :--- | :--- |
+| **Critically Important** | Traffic Speed<br>Traffic Accidents, Pedestrian<br>Traffic Activity<br>Amenities Rest Spot, Bench<br>Environmental Weather<br>Environmental Shade<br>Safety Crime Stats, Sex Offenders<br>Safety Crime Stats, Assault<br>Infrastructure Sidewalk, Dist. From Road<br>Infrastructure Sidewalk, Visibility, Slope<br>Traffic Intersection, Type<br>Safety Crosswalks<br>Infrastructure Traffic Signals<br>Amenities Parking<br>Amenities Rest Spot, Water fountain<br>Practical Baby, Mode of Transport<br>Environmental Noise pollution<br>Environmental Air Quality<br>Environmental Pollen<br>Safety Curb<br>Safety Incidents, Animal Attacks<br>Safety Loose Animal Reports | Safety Temporal, Time to walk<br>Infrastructure Sidewalk, Condition, Cracks<br>Infrastructure Sidewalk, Size, Width<br>Outdoors Sidewalk, Foot Traffic |
+| **Probably Not Needed** | Infrastructure Sidewalk, Size, Breaks/Gaps<br>Environmental Shade<br>Infrastructure Sidewalk, Condition, Environment<br>Safety Incidents, Animal Attacks<br>Safety Loose Animal Reports<br>Safety Crime Stats, Robbery<br>Traffic Accidents, Property<br>Safety Bollards<br>Amenities Rest Spot, Park<br>Amenities Rest Spot, Covered pavilion | Internal Parent, Experience<br>Infrastructure Activity, Construction<br>Infrastructure Sidewalk, Visibility, Turns<br>Internal Parent, Fatigue |
