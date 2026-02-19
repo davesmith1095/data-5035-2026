@@ -11,11 +11,16 @@ WITH YEAR_FIX AS(
 -- Query data from CTE, append binary data quality fields
 SELECT *,
 -- Check Age vs. Birth Year for inaccuracies. Current YR - Age should be Birth Year.
-        CASE WHEN YEAR(CURRENT_DATE()) - AGE <> BIRTH_YEAR THEN 1 ELSE 0 END AS AGE_CHECK,
+        CASE WHEN AGE = (YEAR(CURRENT_DATE()) - BIRTH_YEAR) THEN 1,
+        --added line to account for bdays that haven't yet passed
+        CASE WHEN AGE = (YEAR(CURRENT_DATE()) - BIRTH_YEAR - 1) THEN 1 , 
+        CASE WHEN YEAR(CURRENT_DATE()) - AGE -1)
+        ELSE 0 END AS AGE_CHECK,
 
-/*  Case 1: Age = 45, Birth Year = 1980, 1
-    Case 2: Age = 26, Birth Year = 2005, 1
+/*  Case 1: Age = 45, Birth Year = 1980, 0
+    Case 2: Age = 43, Birth Year = 1980, 1
     Case 3: Age = 26, Birth Year = 2000, 0
+    Case 4: Age or Birth Year = NULL, 1
 */
 
 -- Check for names missing capitalization
@@ -23,7 +28,8 @@ SELECT *,
 
 /*  Case 1: 'tim smith', 1
     Case 2: 'Tim Smith', 0
-    Case 3: 'JIM SMITH', 0
+    Case 3: 'JIM SMITH', 1
+    Case 4: NULL, 1
 */
 
 -- Check for short ZIPs (truncated 0s biproduct of number datatype) 
@@ -32,6 +38,7 @@ SELECT *,
 /*  Case 1: '0054', 1
     Case 2: '00592', 0
     Case 3: '630318501', 0
+    Case 4: NULL, 0
 */
 
 
@@ -41,6 +48,7 @@ SELECT *,
 /*  Case 1: Category = 'N/A', 1,
     Case 2: Category = NULL, 1,
     Case 3: Category = 'Healthcare', 0
+    Case 4: Category = '', 1
 */
 
 -- Check phone length after all characters removed. > 10 is int'l or has ext.
@@ -48,8 +56,9 @@ SELECT *,
 -- From CTE which cites donations csv
 
 /*  Case 1: 1-555, 0
-    Case 2: +1/111/555/5252, 0
-    Case 3: +125(5932)314-414
+    Case 2: +1/111/555/5252, 1
+    Case 3: +125(5932)314-414, 1
+    Case 4: NULL, 0
 */
 
 FROM YEAR_FIX
