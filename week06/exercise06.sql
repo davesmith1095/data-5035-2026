@@ -21,6 +21,7 @@ INSERT INTO donations_test
 
 VALUES
 -- | ID | DOB | Age | Name | Zip | Cat | Phone | exp_age | exp_name | exp_zip | exp_cat | exp_phone |
+-- Starts with test row id, last group if INTS is expected pass/fail. 0 = Pass, 1 = Fail
 (1, '0090-08-21', 35, 'tim smith', '0054', 'N/A', '1-555', 0,1,1,1,0 ),
 (2, '0090-08-01', 34, 'Zach Pyatt', '00592', '', '+1/111/555/5252', 1,0,0,0,1),
 (3, '0090-08-21', 36, 'IAN LEE', '630318501', 'Healthcare', '+125(5932)314-414', 0,1,0,0,1),
