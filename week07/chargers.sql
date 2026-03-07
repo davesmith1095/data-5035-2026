@@ -9,13 +9,8 @@ data5035.spring26.
 • POWER_INFRA (55) - Substations (30) + transmission (25)
 • INTERCHANGES (343) - Denser near STL/Chicago/KC
 • ENV_CONSTRAINTS (17) - Wetlands and protected areas as polygons
-    -- GEOM OK
 • WEATHER_RISK (103) - Higher risk in northern IL
-    -- Low Weather Risk: Rvw data, decide what "favorable" is
 • INCIDENTS (103) - Higher crash rates in urban areas
-    -- Low Crash Rate: Rvw data, decide what "low" is
-
-    -- Double-check tables, seems SPEED is not listed. May set as Constant at 70MPH
 
 Criteria:
 • Maximize Demand based on current level of EV traffic
@@ -45,8 +40,51 @@ INTERCHANGES
 ENV_CONSTRAINTS
 */
 
+-- Crash Rate: Flag instances where Crash Rate and Incident Rate are over the average for the entire set
+-- SELECT
+--     SEGMENT_ID,
+--     CRASH_RATE,
+--     INCIDENT_RATE,
+--     ROUND((INCIDENT_RATE / CRASH_RATE) * 100, 2) AS INCIDENT_PCT_OF_CRASH,
+--     CASE
+--         WHEN CRASH_RATE > AVG(CRASH_RATE) OVER ()
+--          AND INCIDENT_RATE > AVG(INCIDENT_RATE) OVER ()
+--         THEN 1
+--         ELSE 0
+--     END AS HIGH_DANGER_FLAG
+-- FROM DATA5035.SPRING26.INCIDENTS
+-- ORDER BY HIGH_DANGER_FLAG DESC, CRASH_RATE DESC;
 
-SELECT * FROM data5035.spring26.POWER_INFRA;
+-- Low Weather Risk: Opted for risk <= 65%
+-- SELECT
+--     r.SEGMENT_ID,
+--     r.INTERSTATE,
+--     r.START_MILE,
+--     r.END_MILE,
+--     CASE
+--         WHEN w.RISK_SCORE >= .65 THEN 1
+--         ELSE 0
+--     END AS HIGH_WTHR_RISK
+-- FROM DATA5035.SPRING26.ROAD_SEGMENTS r
+-- LEFT JOIN DATA5035.SPRING26.WEATHER_RISK w
+--     ON w.SEGMENT_ID = r.SEGMENT_ID;
+
+-- Avoiding Wetlands: Road segments that intersect wetland polygons
+-- Set flag for environmental conditions
+-- SELECT
+--     r.SEGMENT_ID,
+--     r.INTERSTATE,
+--     r.START_MILE,
+--     r.END_MILE,
+--     CASE
+--         WHEN e.CONSTRAINT_ID IS NOT NULL THEN 1
+--         ELSE 0
+--     END AS ENV_FLAG
+-- FROM DATA5035.SPRING26.ROAD_SEGMENTS r
+-- LEFT JOIN DATA5035.SPRING26.ENV_CONSTRAINTS e
+--     ON ST_INTERSECTS(r.GEOM, e.GEOM)
+-- ORDER BY r.INTERSTATE, r.START_MILE;
+
 
 -- Demand per EV Traffic: Percentage of AADT_EV out of AADT_TOTAL
 --  SELECT *, 
@@ -56,16 +94,6 @@ SELECT * FROM data5035.spring26.POWER_INFRA;
 
 -- Manageable traffic speeds: Speed limit listed here
 -- Maybe weigh the values differently so that the higher the interchange count the less suitable for EV lane
--- SELECT
---     r.SEGMENT_ID,
---     r.INTERSTATE,
---     r.SPEED_LIMIT,
---     COUNT(i.INTERCHANGE_ID) AS interchange_count
--- FROM DATA5035.SPRING26.ROAD_SEGMENTS r
--- LEFT JOIN DATA5035.SPRING26.INTERCHANGES i
---     ON ST_DWITHIN(r.GEOM, i.GEOM, 1000)
--- GROUP BY r.SEGMENT_ID, r.INTERSTATE, r.SPEED_LIMIT
--- ORDER BY interchange_count ASC, SPEED_LIMIT DESC;
 
 
 -- Proximity to Power: Check avg dist from plant to road segments
@@ -94,8 +122,6 @@ SELECT * FROM data5035.spring26.POWER_INFRA;
 -- GROUP BY r.SEGMENT_ID, r.INTERSTATE
 -- ORDER BY interchange_count DESC;
 
-
-
 -- Suitable Geometry, mostly N/S, main changes at highways
 -- Suitable Geometry: diff between start/end points to check straightness
 -- WITH geom_diffs AS (
@@ -123,3 +149,15 @@ SELECT * FROM data5035.spring26.POWER_INFRA;
 -- )
 -- SELECT SEGMENT_ID, INTERSTATE, heading_degrees
 -- FROM geom_diffs;
+
+-- Speed Limit: Flag segments with speed limits under 70
+-- SELECT
+--     r.SEGMENT_ID,
+--     r.INTERSTATE,
+--     r.SPEED_LIMIT,
+--     CASE
+--         WHEN r.SPEED_LIMIT < 70 THEN 1
+--         ELSE 0
+--     END AS LOW_SPEED_FLAG
+-- FROM DATA5035.SPRING26.ROAD_SEGMENTS r
+-- ORDER BY LOW_SPEED_FLAG DESC, r.SPEED_LIMIT ASC;
