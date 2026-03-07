@@ -1,8 +1,3 @@
-/* 
-Working Notes:
-Consider level 1, 2, and 3 charging: https://sepapower.org/knowledge/ev-charging-infrastructure/
-*/
-
 WITH 
 
 -- 1. Demand: Maximize Demand based on current level of EV traffic
