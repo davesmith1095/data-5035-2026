@@ -104,22 +104,23 @@ safety_speed AS (
             ELSE 0 
         END AS SAFE_SPEED_FLAG
     FROM DATA5035.SPRING26.ROAD_SEGMENTS
-)
+),
 
 -- FINAL SELECT: Join all CTEs and calculate total suitability score
-SELECT 
-    r.SEGMENT_ID,
-    r.INTERSTATE,
-    (
-        COALESCE(td.HIGH_DEMAND_FLAG, 0) + 
-        COALESCE(sc.SAFE_CRASH_FLAG, 0) + 
-        COALESCE(sw.SAFE_WTHR_FLAG, 0) + 
-        COALESCE(fe.SAFE_ENV_FLAG, 0) + 
-        COALESCE(fp.POWER_ACCESS_FLAG, 0) + 
-        COALESCE(fi.LOW_INTERCHANGE_FLAG, 0) + 
-        COALESCE(ss.SAFE_SPEED_FLAG, 0)
-    ) AS SUITABILITY_SCORE
-FROM DATA5035.SPRING26.ROAD_SEGMENTS r
+scored_segments AS (
+    SELECT
+        r.SEGMENT_ID,
+        r.INTERSTATE,
+        (
+            COALESCE(td.HIGH_DEMAND_FLAG, 0) + 
+            COALESCE(sc.SAFE_CRASH_FLAG, 0) + 
+            COALESCE(sw.SAFE_WTHR_FLAG, 0) + 
+            COALESCE(fe.SAFE_ENV_FLAG, 0) + 
+            COALESCE(fp.POWER_ACCESS_FLAG, 0) + 
+            COALESCE(fi.LOW_INTERCHANGE_FLAG, 0) + 
+            COALESCE(ss.SAFE_SPEED_FLAG, 0)
+        ) AS SUITABILITY_SCORE
+    FROM DATA5035.SPRING26.ROAD_SEGMENTS r
 LEFT JOIN traffic_demand td ON r.SEGMENT_ID = td.SEGMENT_ID
 LEFT JOIN safety_crash sc ON r.SEGMENT_ID = sc.SEGMENT_ID
 LEFT JOIN safety_weather sw ON r.SEGMENT_ID = sw.SEGMENT_ID
@@ -127,4 +128,58 @@ LEFT JOIN feasibility_env fe ON r.SEGMENT_ID = fe.SEGMENT_ID
 LEFT JOIN feasibility_power fp ON r.SEGMENT_ID = fp.SEGMENT_ID
 LEFT JOIN feasibility_interchanges fi ON r.SEGMENT_ID = fi.SEGMENT_ID
 LEFT JOIN safety_speed ss ON r.SEGMENT_ID = ss.SEGMENT_ID
-ORDER BY SUITABILITY_SCORE DESC, r.INTERSTATE, r.SEGMENT_ID;
+),
+
+-- 9. Parse and Island Grouping: Extract number and create unique island groups
+islands AS (
+    SELECT 
+        SEGMENT_ID,
+        INTERSTATE,
+        SUITABILITY_SCORE,
+        CAST(SPLIT_PART(SEGMENT_ID, '-', 2) AS INTEGER) AS segment_num,
+        -- Subtract row number from segment number to group continuous segments 
+        -- that share the same interstate AND the same suitability score
+        CAST(SPLIT_PART(SEGMENT_ID, '-', 2) AS INTEGER) - ROW_NUMBER() OVER (
+            PARTITION BY INTERSTATE, SUITABILITY_SCORE 
+            ORDER BY CAST(SPLIT_PART(SEGMENT_ID, '-', 2) AS INTEGER)
+        ) AS island_group
+    FROM scored_segments
+),
+
+-- 10. Segment Counting: Count the continuous chunks
+island_counts AS (
+    SELECT 
+        SEGMENT_ID,
+        INTERSTATE,
+        SUITABILITY_SCORE,
+        COUNT(*) OVER (
+            PARTITION BY INTERSTATE, SUITABILITY_SCORE, island_group
+        ) AS consecutive_segment_count
+    FROM islands
+)
+
+-- FINAL SELECT: Output the list to easily identify the top 4 locations
+-- SELECT 
+--     SEGMENT_ID,
+--     INTERSTATE,
+--     SUITABILITY_SCORE,
+--     consecutive_segment_count
+-- FROM island_counts
+-- ORDER BY 
+--     consecutive_segment_count DESC, 
+--     SUITABILITY_SCORE DESC, 
+--     INTERSTATE, 
+--     SEGMENT_ID;
+
+-- 11. Find the maximum consecutive segments per interstate (only top 4 per assignment reqs)
+SELECT 
+    TOP 4 -- comment out to see full list (one per interstate)
+    INTERSTATE,
+    MAX(consecutive_segment_count) AS MAX_CONSECUTIVE_SEGMENTS,
+    MAX(SUITABILITY_SCORE) AS BEST_SCORE_FOR_STRETCH
+FROM island_counts
+GROUP BY 
+    INTERSTATE
+ORDER BY 
+    MAX_CONSECUTIVE_SEGMENTS DESC,
+    BEST_SCORE_FOR_STRETCH DESC;

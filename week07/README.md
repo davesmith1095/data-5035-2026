@@ -1,15 +1,12 @@
-# Declarative Paradigm Workflow Summary:
+## Declarative Paradigm Workflow Summary:
 Since I am still relatively new to using Snowlfake and I am more comfortable using SQL to query databases here, I opted to use declarative SQL for my main programming paradigm. Though, comfort was not the only reason I found a declarative approach to be up for the task of EV charging route site selection. 
 
 With each factor for review (e.g., distance from power plants or speed limit) as a common table expression, I was able to focus on representing a specific trait as a "flag" and holding it in memory as I moved on to the next piece of the puzzle. I suppose a similar approach could be taken imparitively via Python (i.e., replacing CTEs with Pandas dataframes), but CTEs felt like a more direct path to identifying attributes without necessarily needing to assign them specific variables. Rather than getting lost in the details of the imparitive paradigm, the approach in SQL allowed me to declare "look for this specific state and note it with a binary field". 
 
 After identifying favorable locations, they were compiled in a final SELECT statement to show where there were the most favorable flags. 
 
-# AI-Driven Paradigm Workflow Summary
+## AI-Driven Paradigm Workflow Summary
 
-## Part 1: Pair-Programming & Logic Development (Gemini AI)
-
-### Phase 1: Code Explanation & Debugging 
 I drafted an initial set of SQL statements using CTEs to mark flags for desireable EV charging locations, then I used an LLM (Gemini) to evaluate my code and help correct errors in my GEOM joining efforts. While using a UI like ArcGIS Pro, I'm able to visualize operations like "Intersect", but doing so in Snowflake can be challenging.  After Gemini returned this, I asked for it to explain some of the concepts I didn't understand. One example I didn't end up keeping was an experiment with the rotation of the 10-mile road segments. Since these were all lines with two points, I thought taking their difference and comparing their angle to North using ST_POINTN and ATAN2 would return an interpretable number for the degrees from north that a given segment pointed, thus enabling me to understand when 10-mile segments began to curve and were less suitable for the EV charging lane. Alas, even after some updates from a Cartesian to a navigational, compass-style heading (i.e., 0-360), I noticed all the road segments per highway only had one angle, rendering them a little less useful than I'd anticipated. 
 
 Snowflake's AI helped me turn queries that used WHERE clauses into more effective statements using CASE. I knew I wanted to flag certain situations, but had a hard time implementing this at first, particularly for the environmental flags. I waffled between keeping a binary solution or splitting into wetlands AND protected areas. Also, while reviewing the safety metrics, Snowflake AI started by including the crash AND incident values, which I thought was a good idea, so I kept that in the final code rather than just looking at crash rates. Snowflake's AI was my primary helper for debugging when there was an issue with my code, as well, but most of those ended up being the result of moving something around in the original write-up of the code (e.g., a missing comma).
