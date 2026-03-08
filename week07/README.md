@@ -1,43 +1,18 @@
-# AI-Driven Paradigm: Prompt Log & Workflow Summary
+# Declarative Paradigm Workflow Summary:
+Since I am still relatively new to using Snowlfake and I am more comfortable using SQL to query databases here, I opted to use declarative SQL for my main programming paradigm. Though, comfort was not the only reason I found a declarative approach to be up for the task of EV charging route site selection. 
 
-**Objective:** Utilize Large Language Model (LLM) prompting to accelerate SQL development, debug spatial data anomalies, acquire domain knowledge, and troubleshoot syntax for the EV Pilot Location assignment.
+With each factor for review (e.g., distance from power plants or speed limit) as a common table expression, I was able to focus on representing a specific trait as a "flag" and holding it in memory as I moved on to the next piece of the puzzle. I suppose a similar approach could be taken imparitively via Python (i.e., replacing CTEs with Pandas dataframes), but CTEs felt like a more direct path to identifying attributes without necessarily needing to assign them specific variables. Rather than getting lost in the details of the imparitive paradigm, the approach in SQL allowed me to declare "look for this specific state and note it with a binary field". 
+
+After identifying favorable locations, they were compiled in a final SELECT statement to show where there were the most favorable flags. 
+
+# AI-Driven Paradigm Workflow Summary
 
 ## Part 1: Pair-Programming & Logic Development (Gemini AI)
 
 ### Phase 1: Code Explanation & Debugging 
-* **The Ask:** I provided a complex spatial SQL Common Table Expression (CTE) calculating Euclidean distance and headings, asking for a line-by-line explanation. I also prompted the AI to debug coordinate data around the St. Louis area that appeared to be off by a factor of 10 (e.g., `-9.0` instead of `-90.0`).
-* **The Output:** The AI broke down the `ST_POINTN` and `ATAN2` math. It explained the difference between Cartesian angles and navigational compass headings, providing the mathematical workaround to map directions to a standard 360-degree compass. It also identified the coordinate anomaly as native scientific notation (`e+01`), confirming the data was safe to query without manual modification.
+I drafted an initial set of SQL statements using CTEs to mark flags for desireable EV charging locations, then I used an LLM (Gemini) to evaluate my code and help correct errors in my GEOM joining efforts. While using a UI like ArcGIS Pro, I'm able to visualize operations like "Intersect", but doing so in Snowflake can be challenging.  After Gemini returned this, I asked for it to explain some of the concepts I didn't understand. One example I didn't end up keeping was an experiment with the rotation of the 10-mile road segments. Since these were all lines with two points, I thought taking their difference and comparing their angle to North using ST_POINTN and ATAN2 would return an interpretable number for the degrees from north that a given segment pointed, thus enabling me to understand when 10-mile segments began to curve and were less suitable for the EV charging lane. Alas, even after some updates from a Cartesian to a navigational, compass-style heading (i.e., 0-360), I noticed all the road segments per highway only had one angle, rendering them a little less useful than I'd anticipated. 
 
-### Phase 2: Domain Knowledge Acquisition
-* **The Ask:** To properly score the "Proximity to power infrastructure" criteria, I asked for an explanation of how substations work compared to transmission lines.
-* **The Output:** The AI provided an analogy-driven breakdown of the electrical grid, explaining that transmission lines act as high-voltage interstates, while substations act as step-down transformers to make the voltage safe for local distribution. This validated the decision to filter specifically for substations in the SQL logic.
+Snowflake's AI helped me turn queries that used WHERE clauses into more effective statements using CASE. I knew I wanted to flag certain situations, but had a hard time implementing this at first, particularly for the environmental flags. I waffled between keeping a binary solution or splitting into wetlands AND protected areas. Also, while reviewing the safety metrics, Snowflake AI started by including the crash AND incident values, which I thought was a good idea, so I kept that in the final code rather than just looking at crash rates. Snowflake's AI was my primary helper for debugging when there was an issue with my code, as well, but most of those ended up being the result of moving something around in the original write-up of the code (e.g., a missing comma).
 
-### Phase 3: Code Consolidation (Declarative Development)
-* **The Ask:** I supplied a series of disconnected SQL draft queries, my working notes, and the assignment constraints. I asked the AI to consolidate them into a logical order using `CASE` flags to calculate a final suitability score for EV chargers.
-* **The Output:** The AI refactored the disparate queries into a single, highly optimized SQL script using CTEs. It applied `COALESCE` to handle nulls and successfully joined data across the Traffic, Incidents, Weather, Environment, Power, and Road tables to generate an aggregated `SUITABILITY_SCORE`.
+When I was done with my initial pass of functioning SQL statements, my code felt out of order and was becoming troublesome to scan up and down through, so I sent it to Gemini and asked it to return the code in a logical order that would help me write the final statement for compiling everything. It also wrote that final SQL statement, which was nice, because I still get confused by the use of COALESCE, but it was sensible to use it in the final compilation of 0/1 flags. I tried to refine the project with a few ideas after I had a base level of suitability established. First, I considered that for every segment which has another segment on either side of it with a matching, high suitability score, its own value for an EV lane is increased. Unfortunately, the data type of the segments made it challenging to apply this idea. Next, I stepped back and reviewed each SQL statement and refined variables where necessary. As an example, the GEOM distances are in meters rather than feet, and I realized I could refine the distances considered for interchange compactness. 
 
-### Phase 4: Advanced Logic & Iteration
-* **The Ask:** I prompted the AI to push the logic further by finding continuous stretches of high-scoring roads (scores of 4 or 5). I later asked to dynamically assign Level 1, Level 2, or Level 3 chargers based on the length of those continuous stretches.
-* **The Output:** The AI introduced a "Gaps and Islands" window function technique to group sequential road segments. *Crucially, the AI also provided a physical reality check, noting that driving at 30 mph consumes more energy than Level 1 or Level 2 chargers can output, meaning an in-motion system inherently requires Level 3 DC Fast Charging regardless of lane length.* We ultimately reverted to the base scoring model based on this physical constraint.
-
-### Phase 5: Cross-Paradigm Integration (Imperative Integration)
-* **The Ask:** I asked how to combine the finalized declarative SQL script with imperative Python code.
-* **The Output:** The AI generated a Python `pandas` pipeline that establishes a database connection, executes the declarative SQL string, explicitly sorts the results in memory to isolate the top 4 locations, and writes the output to the required `SEGMENTS.csv` file.
-
----
-
-## Part 2: Snowflake Native AI Assistant Log
-
-**Objective:** Utilize Snowflake's native AI assistant to rapidly iterate on specific CTEs, engineer new features, and troubleshoot syntax and data type errors in real-time.
-
-### Feature Engineering (Environmental & Speed Flags)
-* **The Ask:** I prompted the AI to update an environmental query to use a `CASE` statement (flagging wetlands/protected areas as `1` and others as `0`) and later asked it to write a standalone query flagging road segments with speed limits under 70 mph. 
-* **The Output:** The AI successfully structured the `LEFT JOIN` to ensure all 103 segments were evaluated, creating an `ENV_FLAG`. It also generated a separate query that created a `LOW_SPEED_FLAG`, correctly identifying that the low-speed highway segments clustered near the major urban endpoints (St. Louis, Chicago, KC).
-
-### Refining Safety Metrics (Crash vs. Incident Rates)
-* **The Ask:** I initially asked for a column showing the correlation between `CRASH_RATE` and `INCIDENT_RATE`. Realizing the `CORR()` window function returned a static value for the whole dataset, I pivoted and asked the AI to calculate what percentage the incident rate was of the crash rate, and to flag segments where both rates were above average.
-* **The Output:** The AI updated the query to calculate `INCIDENT_PCT_OF_CRASH` (revealing incidents were roughly 3-9% of crashes) and created a `HIGH_DANGER_FLAG` to isolate the 34 most dangerous road segments to avoid when placing chargers.
-
-### Syntax & Logic Debugging
-* **The Ask:** I fed two specific SQL compilation errors directly into the chat: an `unexpected 'WITH'` syntax error, and a `Numeric value 'I55-004' is not recognized` casting error. 
-* **The Output:** The AI accurately diagnosed both issues. For the syntax error, it explained that chained CTEs must be separated by commas rather than repeating the `WITH` keyword. For the casting error, it recognized that the system was trying to perform mathematical subtraction on a string (`I55-004`). It provided the exact `SPLIT_PART()` logic needed to isolate the numeric suffix before casting it as an integer, allowing the window functions to run properly.

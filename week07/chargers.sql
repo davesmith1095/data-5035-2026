@@ -4,8 +4,10 @@ WITH
 traffic_demand AS (
     SELECT 
         SEGMENT_ID,
+        -- Find proportion of EV to total traffic
         (AADT_EV / AADT_TOTAL) * 100 AS EV_SHARE_PCT,
         CASE 
+            -- Wherever more than five percent of total traffic is EVs, flag as "high demand"
             WHEN (AADT_EV / AADT_TOTAL) * 100 > 5.0 THEN 1 
             ELSE 0 
         END AS HIGH_DEMAND_FLAG
@@ -17,19 +19,24 @@ safety_crash AS (
     SELECT 
         SEGMENT_ID,
         CRASH_RATE,
+        INCIDENT_RATE,
         CASE 
-            WHEN CRASH_RATE < AVG(CRASH_RATE) OVER () THEN 1 
+            -- Find where crash AND incident rates are less than their average overall
+            -- later flag as "safe"
+            WHEN CRASH_RATE < AVG(CRASH_RATE) OVER () THEN 1
+            WHEN INCIDENT_RATE < AVG(INCIDENT_RATE) OVER () THEN 1
             ELSE 0 
         END AS SAFE_CRASH_FLAG
     FROM DATA5035.SPRING26.INCIDENTS
 ),
 
--- 3. Safety: Favorable weather risk
+-- 3. Safety: Unfavorable weather risk
 safety_weather AS (
     SELECT 
         r.SEGMENT_ID,
         CASE 
-            WHEN w.RISK_SCORE <= 0.65 THEN 1 
+            -- Find where there's a less than 65% chance of favorable weather 
+            WHEN w.RISK_SCORE >= 0.65 THEN 1 
             ELSE 0 
         END AS SAFE_WTHR_FLAG
     FROM DATA5035.SPRING26.ROAD_SEGMENTS r
@@ -41,12 +48,15 @@ safety_weather AS (
 feasibility_env AS (
     SELECT 
         r.SEGMENT_ID,
-        CASE 
-            WHEN e.CONSTRAINT_ID IS NULL THEN 1 -- 1 means NO intersection (good)
+        CASE
+            -- Check join for more details, NULL means no intersection with restricted area
+            WHEN e.CONSTRAINT_ID IS NULL THEN 1
             ELSE 0 
         END AS SAFE_ENV_FLAG
     FROM DATA5035.SPRING26.ROAD_SEGMENTS r
+    -- Using left join to keep all data for flagging data as appropriate or not
     LEFT JOIN DATA5035.SPRING26.ENV_CONSTRAINTS e
+        -- Joining on ST_INTERSECTS checks if the lines from road segment geographies intersect env. polygons
         ON ST_INTERSECTS(r.GEOM, e.GEOM)
 ),
 
@@ -61,6 +71,8 @@ feasibility_power AS (
         END AS POWER_ACCESS_FLAG
     FROM DATA5035.SPRING26.ROAD_SEGMENTS r
     CROSS JOIN DATA5035.SPRING26.POWER_INFRA p
+    /* Opted for substation "filter" because they adjust/deliver power rather than
+    transmitting between major locations */
     WHERE p.TYPE = 'substation'
     GROUP BY r.SEGMENT_ID
 ),
@@ -71,12 +83,14 @@ feasibility_interchanges AS (
         r.SEGMENT_ID,
         COUNT(i.INTERCHANGE_ID) AS interchange_count,
         CASE 
-            WHEN COUNT(i.INTERCHANGE_ID) < 3 THEN 1 
+            -- Check for when there are less than 5 exits per 10-mile segment
+            WHEN COUNT(i.INTERCHANGE_ID) < 5 THEN 1 
             ELSE 0 
         END AS LOW_INTERCHANGE_FLAG
     FROM DATA5035.SPRING26.ROAD_SEGMENTS r
     LEFT JOIN DATA5035.SPRING26.INTERCHANGES i
-        ON ST_DWITHIN(r.GEOM, i.GEOM, 1000)
+        -- 1mi ~ 1609 meters. Checking exits per mile in 10 mile segments
+        ON ST_DWITHIN(r.GEOM, i.GEOM, 16100)
     GROUP BY r.SEGMENT_ID
 ),
 
