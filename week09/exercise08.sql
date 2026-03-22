@@ -14,7 +14,7 @@ Batch Yield (Total Units Produced)  |  Total finished units successfully manufac
 -- DELIVERABLE 2: Design a dimensional star schema,  provide Snowflake DDL tables for fact and dimension tables
 
 -- Each record/row represents a cost of a single production batch.
-CREATE TABLE IF NOT EXISTS FACT_BATCH_COSTS (
+CREATE TABLE IF NOT EXISTS DATA5035.CHEETAH.FACT_BATCH_COSTS (
     -- Foreign Keys
     batch_id VARCHAR PRIMARY KEY, -- There's a batch dimension table, so Batch ID is both a foreign and primary key
     date_key INT,
@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS FACT_BATCH_COSTS (
     for avg. material cost per facility, quality cost per product, holding time/cost per product/facility, etc.
 **/
 
-CREATE TABLE IF NOT EXISTS DIM_DATE (
+CREATE TABLE IF NOT EXISTS DATA5035.CHEETAH.DIM_DATE (
     date_key INT PRIMARY KEY,
     date DATE,
     week_of_year INT,
@@ -43,7 +43,7 @@ CREATE TABLE IF NOT EXISTS DIM_DATE (
     year INT
 );
 
-CREATE TABLE IF NOT EXISTS DIM_BATCH (
+CREATE TABLE IF NOT EXISTS DATA5035.CHEETAH.DIM_BATCH (
     batch_id VARCHAR PRIMARY KEY,
     batch_name VARCHAR,
     batch_type VARCHAR,
@@ -55,7 +55,7 @@ CREATE TABLE IF NOT EXISTS DIM_BATCH (
     standard_hours_expected NUMBER (10,2)
 );
 
-CREATE TABLE IF NOT EXISTS DIM_FACILITY (
+CREATE TABLE IF NOT EXISTS DATA5035.CHEETAH.DIM_FACILITY (
     facility_id VARCHAR PRIMARY KEY,
     facility_name VARCHAR,
     facility_type VARCHAR,
@@ -66,7 +66,7 @@ CREATE TABLE IF NOT EXISTS DIM_FACILITY (
     cleanroom_certification BOOLEAN
 );
 
-CREATE TABLE IF NOT EXISTS DIM_PRODUCT (
+CREATE TABLE IF NOT EXISTS DATA5035.CHEETAH.DIM_PRODUCT (
     product_id VARCHAR PRIMARY KEY,
     product_name VARCHAR,
     product_type VARCHAR,
@@ -79,7 +79,7 @@ CREATE TABLE IF NOT EXISTS DIM_PRODUCT (
 
 -- Create Flattened ML Table:
 
-CREATE TABLE IF NOT EXISTS BATCH_ML_PREDICTION (
+CREATE TABLE IF NOT EXISTS DATA5035.CHEETAH.BATCH_ML_PREDICTION (
     --Identifier and Target Variable
     batch_id VARCHAR,
     -- Choosing binary classification to warn about batches reaching 15% over standard cost
