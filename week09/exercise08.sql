@@ -1,3 +1,5 @@
+-- DELIVERABLE 1: Create a Kimball-style bus matrix for the manufacturing cost domain. 
+
 /**
 |  Business Process|  Description  |  Date  |  Batch  |  Facility  |  Product  |  Material  |  Labor  |  Quality  |  Cost Category  |
 |------------------|---------------|--------|---------|------------|-----------|-----------|---------|-----------|-----------------|
@@ -8,6 +10,8 @@ Quality Testing (QC Cost)  |  Cost of routine tests and failure investigations  
 Batch Completion (Total Actual Cost)  |  Total aggregated cost of production batch      |  X   |   X   |   X   |   X   |   X   |       |       |   X   |
 Batch Yield (Total Units Produced)  |  Total finished units successfully manufactured   |  X   |   X   |   X   |   X   |   X   |       |       |       |	
 **/
+
+-- DELIVERABLE 2: Design a dimensional star schema,  provide Snowflake DDL tables for fact and dimension tables
 
 -- Each record/row represents a cost of a single production batch.
 CREATE TABLE IF NOT EXISTS FACT_BATCH_COSTS (
@@ -55,7 +59,7 @@ CREATE TABLE IF NOT EXISTS DIM_FACILITY (
     facility_id VARCHAR PRIMARY KEY,
     facility_name VARCHAR,
     facility_type VARCHAR,
-    location VARCHAR,
+    facility_location VARCHAR,
     production_line VARCHAR,
     cleanroom_iso_level VARCHAR,
     sterile_environment BOOLEAN,
@@ -66,5 +70,45 @@ CREATE TABLE IF NOT EXISTS DIM_PRODUCT (
     product_id VARCHAR PRIMARY KEY,
     product_name VARCHAR,
     product_type VARCHAR,
-    product_category VARCHAR
+    product_category VARCHAR,
+    product_line VARCHAR,
+    solid_dose BOOLEAN
 );
+
+-- DELIVERABLE 3: Choose a serving pattern and design it for the cost domain:
+
+-- Create Flattened ML Table:
+
+CREATE TABLE IF NOT EXISTS BATCH_ML_PREDICTION (
+    --Identifier and Target Variable
+    batch_id VARCHAR,
+    -- Choosing binary classification to warn about batches reaching 15% over standard cost
+    var_over_15_pct BOOLEAN,
+    -- Denormalized Features (from DIM tables), removed foreign keys for comprehensive ML view
+    date_key INT,
+    batch_type VARCHAR,
+    batch_status VARCHAR,
+    batch_duration TIME,
+    standard_cost_expected NUMBER (10,2),
+    standard_hours_expected NUMBER (10,2),
+    facility_name VARCHAR,
+    facility_type VARCHAR,
+    facility_location VARCHAR,
+    production_line VARCHAR,
+    cleanroom_iso_level VARCHAR,
+    sterile_environment BOOLEAN,
+    cleanroom_certification BOOLEAN,
+    product_name VARCHAR,
+    product_type VARCHAR,
+    product_category VARCHAR,
+    product_line VARCHAR,
+    solid_dose BOOLEAN,
+-- Quantitative Features (facts from FACT_BATCH_COSTS)
+    material_cost NUMBER(10,2),
+    labor_cost NUMBER(10,2),
+    overhead_cost NUMBER(10,2),
+    holding_cost NUMBER(10,2),
+    quality_cost NUMBER(10,2),
+    total_actual_cost NUMBER(10,2), -- This variable may get factored out in the future, given its overlap with target
+    total_units_produced NUMBER(10,2)
+    );
