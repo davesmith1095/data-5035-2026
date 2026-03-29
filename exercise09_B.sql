@@ -1,3 +1,6 @@
+-- Set role and schema
+-- USE ROLE CHEETAH_DATA5035_ROLE;
+-- USE SCHEMA DATA5035.CHEETAH;
 /******************************************************************************
  * HEALTHCARE DATA - SQL EXERCISES
  ******************************************************************************/
