@@ -34,6 +34,10 @@ USE SCHEMA DATA5035.CHEETAH;
 -- Columns Returned: patient name | provider name | visit_date
 -- Notes: Filter after join
 
+/******************************************************************************
+ * SQL EXERCISES
+******************************************************************************/
+
 CREATE TABLE IF NOT EXISTS patients (
     patient_id INT,
     "name" STRING,
@@ -78,21 +82,21 @@ JOIN "providers" pr ON v.provider_id = pr.provider_id;
 -- Used RIGHT JOIN to bring in all patients then bring in visits (null or not)
 SELECT pa."name" AS "patient name", v.visit_id
 FROM visits v
-RIGHT JOIN patients pa ON v.patient_id = pa.patient_id
+RIGHT JOIN patients pa ON v.patient_id = pa.patient_id;
 
 
 --Q3
 -- Used RIGHT JOIN to bring in all providers then bring in visits (null or not)
 SELECT pr.provider_name AS "provider name", v.visit_id
 FROM visits v
-RIGHT JOIN "providers" pr ON v.provider_id = pr.provider_id
+RIGHT JOIN "providers" pr ON v.provider_id = pr.provider_id;
 
 --Q4
 -- Used RIGHT JOIN again to bring in all visits records per patients (null or not) but then specified with WHERE statement to ONLY include NULL. This shows patients w/o visits.
 SELECT pa."name" AS "patient name"
 FROM visits v
 RIGHT JOIN patients pa ON v.patient_id = pa.patient_id
-WHERE v.visit_id IS NULL
+WHERE v.visit_id IS NULL;
 
 --Q5
 -- Same as Q1 but with a WHERE clause to filter for Cardiology

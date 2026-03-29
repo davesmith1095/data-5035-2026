@@ -2,7 +2,7 @@
 USE ROLE CHEETAH_DATA5035_ROLE;
 USE SCHEMA DATA5035.CHEETAH;
 /******************************************************************************
- * SQL Questions
+ * RETAIL DATA - SQL QUESTIONS
  ******************************************************************************/
 
 -- Q1: Show all purchases with the customer who made them
@@ -88,18 +88,18 @@ LEFT JOIN orders o ON o.customer_id = c.customer_id;
 SELECT o.order_id,
     CASE WHEN r.order_id IS NOT NULL THEN 'TRUE' ELSE 'FALSE' END AS is_returned
 FROM orders o 
-LEFT JOIN "returns" r ON r.order_id = o.order_id
+LEFT JOIN "returns" r ON r.order_id = o.order_id;
 
 --Q4
 -- Used INNER JOIN again to get the customers, returns, and orders. Due to the inclusion of this join, only returns were kept if they had a matching order, and only orders if they had a corresponding customer, so there was no need to filter with a CASE or WHERE clause
 SELECT c."name", o.order_id, r.return_date
 FROM customers c
 JOIN orders o ON o.customer_id = c.customer_id
-JOIN "returns" r ON r.order_id = o.order_id
+JOIN "returns" r ON r.order_id = o.order_id;
 
 --Q5
 -- Used a LEFT JOIN to only get customers who did not place an order. This effectively puts the customers on the right side of the join and then only selects where orders were null.
 SELECT c."name"
 FROM customers c
 LEFT JOIN orders o ON c.customer_id = o.customer_id
-WHERE o.order_id IS NULL
+WHERE o.order_id IS NULL;
